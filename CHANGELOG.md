@@ -30,6 +30,46 @@ Entries are organized by development phase, then by commit.
 
 ---
 
+## Phase 3 — Core Card UI
+**Goal:** EventCard with flip animation, CardFront/CardBack components, GameScreen wiring, ending screen.
+
+### Commit: `(pending)` — Phase 3: core card UI components and GameScreen
+
+**`src/components/UI/ImageWithShimmer.tsx`**
+- Renders an image with a shimmer skeleton while loading (CSS `@keyframes shimmer` + `animate-pulse`).
+- Fades the image in on `onLoad` via opacity transition.
+- Shows a "No image" fallback on `onError`.
+- Applies a bottom-edge gradient vignette to blend the image into the card body.
+
+**`src/components/EventCard/CardFront.tsx`**
+- Renders the front face of an event card: image (via `ImageWithShimmer`), story text, and action buttons.
+- Choice event variant: two side-by-side choice buttons. Tapping a button highlights it (125ms visual feedback) then calls `onSelectChoice`. Buttons are disabled during the flip.
+- Narrative event variant: a single centered "Continue" button calls `onContinueNarrative`.
+- Text area is `overflow-y-auto` with hidden scrollbars for long story text.
+
+**`src/components/EventCard/CardBack.tsx`**
+- Renders the back face: consequence image, "You chose: …" label, consequence text (italic), and a "Continue →" button.
+
+**`src/components/EventCard/EventCard.tsx`**
+- Flip animation: uses Framer Motion `AnimatePresence mode="wait"` with `scaleX: 0 → 1` half-flip transitions (0.18s each). Front collapses to edge, back expands from edge — reliable cross-browser card flip without CSS `preserve-3d`.
+- Local `faceShowing` state syncs from the persisted `cardPhase` store value, so refreshing the page on the back face restores the correct face.
+- `onExitComplete` callback advances the store from `'flipping'` to `'back'` after the exit animation finishes, keeping the Continue button non-interactive during the animation.
+
+**`src/components/GameScreen.tsx`**
+- Card advance animation: `AnimatePresence mode="wait"` with `key={currentEvent.id}`. New card slides in from right (x: 80 → 0, opacity 0→1, scale 0.95→1); old card exits left (x: 0→-80, scale 1→0.9).
+- Phase 3 auto-start: if `currentEventId` is empty, calls `startNewGame(1)` automatically (replaced by TitleScreen in Phase 4).
+- Ending screen: dedicated layout with ending image, divider, title, text, and "Play Again" button. Animated in with `y: 20 → 0`.
+
+**`src/App.tsx`**
+- Fetches `/story.json` on mount; shows a loading state and error fallback.
+- Renders `GameScreen` once story is loaded.
+
+**`src/index.css`**
+- Added `@keyframes shimmer` for the loading skeleton sweep.
+- Added `.scrollbar-none` utility for hidden scrollbars.
+
+---
+
 ## Phase 2 — Story Engine Tests + useStoryEngine Hook
 **Goal:** Full unit test coverage of all engine modules; `useStoryEngine` hook wiring engine to stores.
 

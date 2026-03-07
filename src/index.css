@@ -25,3 +25,16 @@ body {
 #root {
   min-height: 100dvh;
 }
+
+@keyframes shimmer {
+  100% { transform: translateX(200%); }
+}
+
+/* Hide scrollbars while keeping scroll functionality */
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
