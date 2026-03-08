@@ -13,6 +13,8 @@ interface EventCardProps {
   onConfirmConsequence: () => void;
   onContinueNarrative: () => void;
   onSetCardPhase: (phase: CardPhase) => void;
+  /** Disables all interaction (used during replay). */
+  disabled?: boolean;
 }
 
 // Variants for the flip between front and back faces.
@@ -46,6 +48,7 @@ export function EventCard({
   onConfirmConsequence,
   onContinueNarrative,
   onSetCardPhase,
+  disabled,
 }: EventCardProps) {
   // Local face state — drives AnimatePresence key.
   // Initialise from persisted cardPhase (e.g. user refreshed on back face).
@@ -74,6 +77,8 @@ export function EventCard({
 
   return (
     <div
+      role="article"
+      aria-label="Story card"
       className="
         relative flex flex-col
         bg-[#1a1714] border border-[#5c4a2a] rounded-2xl overflow-hidden
@@ -93,7 +98,10 @@ export function EventCard({
               event={event}
               onSelectChoice={onSelectChoice}
               onContinueNarrative={onContinueNarrative}
-              disabled={cardPhase === 'flipping'}
+              disabled={disabled || cardPhase === 'flipping'}
+              highlightedChoiceId={
+                cardPhase === 'flipping' ? pendingOutcome?.choiceId : undefined
+              }
             />
           </motion.div>
         ) : (

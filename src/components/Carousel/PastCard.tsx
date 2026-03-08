@@ -1,4 +1,5 @@
 import type { HistoryEntry } from '../../types/story';
+import { ImageWithShimmer } from '../UI/ImageWithShimmer';
 
 interface PastCardProps {
   entry: HistoryEntry;
@@ -22,12 +23,11 @@ export function PastCard({ entry }: PastCardProps) {
       }}
     >
       {/* Event image — top 45% */}
-      <div className="shrink-0 overflow-hidden bg-[#111009]" style={{ height: '45%' }}>
-        <img
+      <div className="shrink-0 overflow-hidden" style={{ height: '45%' }}>
+        <ImageWithShimmer
           src={entry.eventImage}
           alt=""
-          className="w-full h-full object-cover"
-          loading="lazy"
+          className="w-full h-full"
         />
       </div>
 

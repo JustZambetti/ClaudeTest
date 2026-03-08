@@ -4,6 +4,8 @@ import type { Story } from './types/story';
 import storyData from '../public/story.json';
 import { useGameStore } from './store/gameStore';
 import { useSavesStore } from './store/savesStore';
+import { buildInitialState } from './engine/stateManager';
+import { preloadStoryPath } from './engine/imagePreloader';
 import { TitleScreen } from './components/TitleScreen/TitleScreen';
 import { GameScreen } from './components/GameScreen';
 
@@ -11,16 +13,44 @@ const story = storyData as unknown as Story;
 
 type Screen = 'title' | 'game';
 
+// ── Parse replay path from URL (runs once at module load) ─────────────────
+function consumeReplayPath(): string[] {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get('path');
+  if (!raw) return [];
+  // Remove the query string so the URL stays clean
+  window.history.replaceState({}, '', window.location.pathname);
+  return raw.split(',').filter(Boolean);
+}
+
 export default function App() {
   const currentEventId = useGameStore((s) => s.currentEventId);
   const resetGame = useGameStore((s) => s.resetGame);
   const loadFromSave = useGameStore((s) => s.loadFromSave);
   const { slots } = useSavesStore();
 
-  // Start on the game screen if a session was already in progress.
-  const [screen, setScreen] = useState<Screen>(() =>
-    currentEventId ? 'game' : 'title'
-  );
+  // Parse replay path from URL once; initialise game state for replay if found.
+  const [replayChoicePath] = useState<string[]>(() => {
+    const path = consumeReplayPath();
+    if (path.length > 0) {
+      // Overwrite any in-progress runtime state so the replay starts clean.
+      const initialState = buildInitialState(story.initialState);
+      useGameStore.getState().startGame(story.meta.startEventId, initialState, null);
+      // Kick off background preload for every image in the recorded path so
+      // the browser cache is warm before the animated replay reaches each card.
+      preloadStoryPath(story, path);
+    }
+    return path;
+  });
+
+  const [isReplay, setIsReplay] = useState(() => replayChoicePath.length > 0);
+
+  // Start on the game screen if a session was already in progress (or replay).
+  const [screen, setScreen] = useState<Screen>(() => {
+    if (replayChoicePath.length > 0) return 'game';
+    return currentEventId ? 'game' : 'title';
+  });
+
   // Tracks which slot to initialise when starting a fresh game.
   const [newGameSlotId, setNewGameSlotId] = useState<1 | 2 | 3 | null>(null);
 
@@ -41,7 +71,13 @@ export default function App() {
   function handleReturnToTitle() {
     resetGame();
     setNewGameSlotId(null);
+    setIsReplay(false);
     setScreen('title');
+  }
+
+  function handleReplaySaved(_slotId: 1 | 2 | 3) {
+    // The save itself is handled inside GameScreen; here we just exit replay mode.
+    setIsReplay(false);
   }
 
   return (
@@ -70,8 +106,10 @@ export default function App() {
         >
           <GameScreen
             story={story}
-            newGameSlotId={newGameSlotId}
+            newGameSlotId={isReplay ? null : newGameSlotId}
             onReturnToTitle={handleReturnToTitle}
+            replayChoicePath={isReplay ? replayChoicePath : []}
+            onReplaySaved={handleReplaySaved}
           />
         </motion.div>
       )}

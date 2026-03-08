@@ -33,9 +33,9 @@ export function Carousel({ history, children }: CarouselProps) {
   return (
     <div
       ref={scrollRef}
+      role="region"
+      aria-label="Story history"
       className="w-screen overflow-x-auto overflow-y-visible scrollbar-none"
-      // Allow native touch scroll on mobile; overflow-x visible would clip — we want
-      // the vertical overflow (card shadow) to show, handled by the py padding below.
       style={{ WebkitOverflowScrolling: 'touch' }}
     >
       {/* Inner row — sized to its content so the scroll container knows its full width. */}

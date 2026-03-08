@@ -30,6 +30,124 @@ Entries are organized by development phase, then by commit.
 
 ---
 
+## Phase 8 — Polish & Demo Content
+**Goal:** Full Reigns visual theme, EndingScreen component with Share, accessibility, active-slot indicator, expanded 30-event demo story.
+
+### Commit: `(pending)` — Phase 8: polish, accessibility, EndingScreen, and expanded story
+
+**`public/story.json`** — Expanded from 14 to 30 events (version 2.0):
+- Added state variable `hasRecord` (bool, default false) — set true in all `archive_inside` outcomes; `confrontation` outcomes now check it to gate triumph.
+- New mid-story events: `city_morning`, `market_debrief`, `inn_detour`, `inn_night`, `inn_morning`, `archive_exit`, `dawn_streets`, `harwick_private`, `bribed_path`, `council_eve`.
+- Lord Harwick now appears in person (`harwick_private`) and offers a bribe; accepting leads to `ending_betrayal` ("The Price of Silence") via `bribed_path`.
+- Archive exit choice: leave cleanly (suspicion −5) or copy the payment ledger (trust +10, suspicion +15 — extra evidence at a cost).
+- `confrontation` has 4 outcome branches per choice: checks `hasRecord AND trust > 65` (triumph), `hasRecord AND suspicion > 60` (imprisoned), `hasRecord` (stalemate), and null fallback (exile). Fully state-driven.
+- New endings: `ending_betrayal` ("The Price of Silence"), `ending_advisor` ("The Long Game").
+- Epilogue chains added for stalemate, exile, imprisonment, and advisor paths. Triumph path now properly routes through `epilogue_triumph_1 → epilogue_triumph_2` (previously orphaned).
+- Total: 30 events, 6 endings, 5 state variables.
+
+**`src/components/EndingScreen.tsx`** — New component extracted from `GameScreen`:
+- Full ending layout: image (`ImageWithShimmer`, `vignetteColor="#0f0e0d"`), divider, title, italic text.
+- **Share button**: builds `?path=choicePath.join(',')` URL, copies to clipboard, shows a 2.5s "Link copied!" toast (AnimatePresence fade). Only rendered when `choicePath.length > 0`.
+- "Play Again" is demoted to a quiet text link (less visually dominant than Share).
+
+**`src/components/GameScreen.tsx`**:
+- Ending screen replaced with `<EndingScreen ending={...} choicePath={choicePath} onPlayAgain={onReturnToTitle} />`.
+- Added `activeSaveSlot` from game store; slot badge rendered on hamburger button: amber circle with slot number, positioned top-right of the button. `aria-label` on the button includes the slot number.
+
+**`src/components/EventCard/CardFront.tsx`** — Accessibility:
+- Added `useRef` + `useEffect` for focus management: when a new card mounts, focuses the first interactive element (first choice button or Continue button) on `pointer: fine` devices only — avoids triggering the virtual keyboard on mobile touch screens.
+- Story text paragraph has `aria-live="polite"` so screen readers announce each new event.
+
+**`src/components/EventCard/EventCard.tsx`**:
+- Card container has `role="article"` and `aria-label="Story card"`.
+
+**`src/components/Carousel/Carousel.tsx`**:
+- Scroll container has `role="region"` and `aria-label="Story history"`.
+
+**`src/index.css`**:
+- Added `body::after` pseudo-element with an SVG `feTurbulence` fractalNoise pattern at `opacity: 0.035` and `background-size: 200px`. This adds a subtle film-grain texture over the entire app without affecting pointer events or z-index of interactive content.
+
+---
+
+## Phase 7 — Image Preloading
+**Goal:** Robust preloading coverage, shimmer on every image surface, bulk replay pre-warming.
+
+### Commit: `(pending)` — Phase 7: image preloading improvements
+
+**`src/components/UI/ImageWithShimmer.tsx`**
+- Added `useEffect` that resets `loaded` and `error` to `false` whenever `src` changes. Previously, if a parent reused the same component instance with a different URL (e.g. a stale layout before AnimatePresence unmounts), the image from the old source would flash as "loaded". The reset ensures the shimmer always appears for each new image.
+- Vignette is now always rendered (removed the `{loaded && ...}` condition). It appears immediately and acts as a permanent visual separator between the image and card body, rather than popping in on load.
+- Added `vignetteColor?: string` prop (default `#1a1714`) so callers outside the card context can blend the gradient into a different background (e.g. `#0f0e0d` for the ending screen).
+- Empty `src` is now treated as a missing state (renders the "No image" fallback immediately rather than showing an `<img>` with an empty `src`).
+
+**`src/engine/imagePreloader.ts`**
+- Added `preloadStoryPath(story, choicePath)`: silently runs `replayPath` to enumerate every event and consequence image reachable through the recorded path, then calls `preloadImages` on all of them. This warms the browser cache for the entire replay before a single animated card is shown.
+- No new external dependencies — reuses the existing `replayPath` function and `preloadImages`.
+
+**`src/components/Carousel/PastCard.tsx`**
+- Replaced the raw `<img>` (with `loading="lazy"`) with `ImageWithShimmer`. Past card images are already preloaded from previous play but may not be in cache on a resumed session; the shimmer provides graceful loading. The shimmer inherits the container's `filter: saturate(0.35)` / `opacity: 0.45`, so it remains visually consistent with the faded past-card style.
+
+**`src/components/GameScreen.tsx`**
+- Ending screen: replaced raw `<img>` with `ImageWithShimmer` (`vignetteColor="#0f0e0d"` to blend into the page background). The ending image now shows a shimmer while loading and a fallback if the URL fails.
+
+**`src/App.tsx`**
+- Imports `preloadStoryPath` and calls it inside the lazy `useState` initializer immediately after parsing a `?path=` URL. All images for the entire replay are queued for background download before the first render, so by the time the animated replay reaches each card the images are already in cache.
+
+---
+
+## Phase 6 — URL Sharing & Replay
+**Goal:** Share a link that animates the full play-through; Skip button to fast-forward; save-to-slot after replay.
+
+### Commit: `(pending)` — Phase 6: URL sharing, animated replay, and replay overlay
+
+**`src/store/gameStore.ts`**
+- `startGame` now accepts `slotId: 1 | 2 | 3 | null` (null used for replay — no slot assigned yet).
+- Added `loadGameState(data)` action: replaces `currentEventId`, `storyState`, `history`, `choicePath` while resetting `cardPhase` and `pendingOutcome`. Used by the Skip button to fast-forward silently.
+- Added `setActiveSaveSlot(slotId)` action: assigns a save slot after the replay completes.
+
+**`src/hooks/useReplay.ts`**
+- New hook that drives the game engine step-by-step through a recorded `choicePath[]`.
+- Internal state machine with three phases: `selecting` → `confirming` → back to `selecting`.
+  - `selecting`: auto-advances narrative events (700 ms delay); auto-selects the next recorded choice on choice events (900 ms delay); transitions to `confirming` after `selectChoice`.
+  - `confirming`: waits for `cardPhase === 'back'` (flip complete), then auto-calls `confirmConsequence` (1200 ms delay), increments step, returns to `selecting`.
+  - Post-path drain: after all choices are consumed, continues auto-advancing narrative events; transitions to `done` at the next choice or ending event.
+- `skip()`: calls `replayPath` to silently reconstruct full game state, then calls `game.loadGameState` and jumps directly to `done`.
+- Actions are accessed via a stable `actionsRef` to avoid stale closures without adding them to the effect dep array.
+- Returns `{ isDone, currentStep, totalSteps, skip }`.
+
+**`src/components/ReplayOverlay.tsx`**
+- Renders over the game screen in two layers:
+  - Top bar (always visible): "Replaying shared story… N/M" label + "Skip →" button; changes to "Replay complete" when done.
+  - An invisible `pointer-events-auto` overlay during active replay prevents the player from interacting with the cards underneath.
+  - Completion panel (animated in from bottom when `isDone`): "You've caught up" heading + 3 save-slot buttons (each shows slot status) + "Return to title without saving" link.
+- Reads slot status from `useSavesStore` to display names and fill state.
+
+**`src/components/EventCard/CardFront.tsx`**
+- Added optional `highlightedChoiceId?: string` prop. When set, that choice button receives the selected highlight style (`bg-[#3d2e1a] border-[#a07820] text-[#f0d88a]`), letting the replay overlay visually show which choice is being made before the flip.
+
+**`src/components/EventCard/EventCard.tsx`**
+- Added optional `disabled?: boolean` prop; passed through to `CardFront` (combined with existing `cardPhase === 'flipping'` disable).
+- Passes `highlightedChoiceId={cardPhase === 'flipping' ? pendingOutcome?.choiceId : undefined}` to `CardFront`, so the replay-selected choice lights up during the flip animation.
+
+**`src/components/GameScreen.tsx`**
+- New props: `replayChoicePath?: string[]` and `onReplaySaved?: (slotId) => void`.
+- Uses `useReplay` when `replayChoicePath` is non-empty; passes engine actions in.
+- Renders `<ReplayOverlay>` when in replay mode.
+- Passes `disabled={isReplayMode && !replay.isDone}` to `EventCard` to block interaction during active replay.
+- Share button (share icon, top-right): builds `?path=choicePath.join(',')` URL, copies to clipboard, shows a "Link copied!" toast (2 s). Visible only when not in replay mode and `choicePath.length > 0`.
+- Menu/hamburger button and share button are hidden during active replay; re-appear after replay completes.
+- `handleReplaySaved(slotId)`: calls `setActiveSaveSlot`, saves current replayed state to the chosen slot via `savesStore.saveToSlot`, then calls `onReplaySaved` to exit replay mode in App.
+
+**`src/App.tsx`**
+- `consumeReplayPath()`: reads `?path=` query param on load, immediately cleans the URL via `window.history.replaceState`, and returns the parsed choice array. Runs once.
+- Lazy `useState` init: if a replay path is found, calls `useGameStore.getState().startGame(startEventId, initialState, null)` synchronously to reset game to the story start before first render.
+- `isReplay` state: true when a `?path=` URL was opened; set to false after replay is saved or user returns to title.
+- `screen` init: `replayChoicePath.length > 0` forces `'game'` regardless of any persisted `currentEventId`.
+- Passes `replayChoicePath={isReplay ? replayChoicePath : []}` and `onReplaySaved={handleReplaySaved}` to `GameScreen`.
+- `newGameSlotId` is forced to `null` when `isReplay` so `GameScreen` doesn't call `startNewGame` on mount.
+
+---
+
 ## Phase 5 — Title Screen & Save Slots
 **Goal:** Title screen with 3 save slots, screen routing, return-to-title flow.
 

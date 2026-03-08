@@ -2,7 +2,7 @@
   "meta": {
     "id": "the_lost_heir",
     "title": "The Lost Heir",
-    "version": "1.0",
+    "version": "2.0",
     "startEventId": "intro",
     "author": "Demo",
     "coverImage": "https://placehold.co/800x600/1a1714/e8e0d0?text=The+Lost+Heir"
@@ -11,68 +11,76 @@
     "suspicion": { "value": 0,  "min": 0, "max": 100 },
     "trust":     { "value": 50, "min": 0, "max": 100 },
     "gold":      { "value": 20, "min": 0, "max": null },
-    "hasKey":    { "value": false }
+    "hasKey":    { "value": false },
+    "hasRecord": { "value": false }
   },
   "events": {
 
     "intro": {
       "id": "intro",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Kingdom",
-      "text": "The kingdom of Valdris has been without a ruler for three years. You are a wandering scholar who has stumbled upon evidence that the old king had a secret heir. The capital lies ahead.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Road+to+Valdris",
+      "text": "Three years since King Aldric died without a named heir. Three years of regency, and Lord Harwick grows more permanent with each passing month. You are a wandering scholar — and in an estate sale you found something that changes everything: a private letter from the king, dated months before his death, acknowledging a secret child. The capital lies ahead.",
       "nextEventId": "city_gates"
     },
 
     "city_gates": {
       "id": "city_gates",
       "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=City+Gates",
-      "text": "The city gates are manned by two guards. One eyes you with suspicion. A merchant's cart blocks the entrance — the guards are distracted arguing with the driver.",
+      "text": "The city gates are manned by two guards. One eyes you with practised suspicion. A merchant's cart blocks the entrance — the guards are distracted arguing with the driver about a short-weight declaration.",
       "choices": [
         {
           "id": "choice_wait_turn",
-          "label": "Wait your turn",
+          "label": "Wait your turn patiently",
           "outcomes": [
             {
               "condition": null,
               "consequence": {
-                "text": "You wait patiently. The guards wave you through after a cursory glance at your papers.",
+                "text": "You wait with the patience of a scholar. The guards wave you through after a cursory glance at your transit papers. One even wishes you a pleasant stay.",
                 "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Waved+Through",
                 "stateChanges": { "trust": 5 }
               },
-              "nextEventId": "market_square"
+              "nextEventId": "city_morning"
             }
           ]
         },
         {
           "id": "choice_slip_through",
-          "label": "Slip through the chaos",
+          "label": "Slip through the confusion",
           "outcomes": [
             {
               "condition": { ">": ["$suspicion", 30] },
               "consequence": {
-                "text": "A guard spots you from the corner of his eye. 'Oi! Papers!' You present them hastily, heart pounding.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Caught+Sneaking",
+                "text": "A guard spots you from the corner of his eye. 'Oi! Papers!' You present them hastily. He scrutinises your face longer than necessary before waving you through.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Caught+Slipping",
                 "stateChanges": { "suspicion": 20, "trust": -10 }
               },
-              "nextEventId": "market_square"
+              "nextEventId": "city_morning"
             },
             {
               "condition": null,
               "consequence": {
-                "text": "You slide past the arguing men unnoticed. Nobody saw a thing.",
+                "text": "You slide past the arguing men unnoticed, keeping your eyes on the middle distance. Nobody saw a thing. You are inside.",
                 "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Slipped+Through",
                 "stateChanges": { "suspicion": 10 }
               },
-              "nextEventId": "market_square"
+              "nextEventId": "city_morning"
             }
           ]
         }
       ]
     },
 
+    "city_morning": {
+      "id": "city_morning",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Capital+Wakes",
+      "text": "Morning mist clings to the cobblestones of Valdris. A herald's drum rolls from the main square: the Council of Regents convenes in two days to formalise the regency. After three years of deliberation, Lord Harwick is about to become permanent. Time is shorter than you hoped.",
+      "nextEventId": "market_square"
+    },
+
     "market_square": {
       "id": "market_square",
       "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Market+Square",
-      "text": "The market square hums with life. A cloaked woman catches your eye and nods toward an alley. Nearby, an old bookseller has a stall overflowing with dusty manuscripts — exactly what you need.",
+      "text": "The market square hums with life. A cloaked woman catches your eye from across the crowd and nods toward a side alley. A few stalls over, an old bookseller has a stall overflowing with dusty manuscripts — genealogies and legal records among them.",
       "choices": [
         {
           "id": "choice_follow_woman",
@@ -81,33 +89,78 @@
             {
               "condition": null,
               "consequence": {
-                "text": "She presses a small brass key into your hand. 'The heir is real,' she whispers. 'Find the old archive.'",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Brass+Key",
+                "text": "She presses a small brass key into your palm. 'The heir is real,' she breathes. 'Find the royal archive — east wing, third cabinet from the left.' She is gone before you can ask her name.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=A+Brass+Key",
                 "stateChanges": { "hasKey": true, "trust": 10 }
               },
-              "nextEventId": "archive_exterior"
+              "nextEventId": "market_debrief"
             }
           ]
         },
         {
           "id": "choice_browse_books",
-          "label": "Browse the bookseller",
+          "label": "Visit the bookseller",
           "outcomes": [
             {
               "condition": { ">=": ["$gold", 15] },
               "consequence": {
-                "text": "You find a genealogy record that confirms everything. The bookseller names a price — you pay without hesitation.",
+                "text": "You find a royal genealogy in the third stack. The bookseller names a price you would normally refuse. You pay without hesitation. The record confirms a relationship the king was careful to conceal.",
                 "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Genealogy+Record",
                 "stateChanges": { "gold": -15, "trust": 15 }
               },
-              "nextEventId": "archive_exterior"
+              "nextEventId": "market_debrief"
             },
             {
               "condition": null,
               "consequence": {
-                "text": "You find a relevant tome but cannot afford it. The bookseller watches you put it back with sharp eyes.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Too+Expensive",
+                "text": "You find a relevant tome but your coin purse is thin. The bookseller watches you put it back with eyes like a hawk. You memorise what you can before he moves you along.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Empty+Pockets",
                 "stateChanges": { "suspicion": 5 }
+              },
+              "nextEventId": "market_debrief"
+            }
+          ]
+        }
+      ]
+    },
+
+    "market_debrief": {
+      "id": "market_debrief",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Side+Street",
+      "text": "You slip into a quiet side street to take stock. You have two days before the council vote makes Harwick's power permanent. The royal archive lies in the palace district — a quarter hour's walk north. Whatever you do, you must move carefully.",
+      "nextEventId": "inn_detour"
+    },
+
+    "inn_detour": {
+      "id": "inn_detour",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Tallow+Candle+Inn",
+      "text": "The Tallow Candle inn sits at the corner of Weavers Row. You can spend the afternoon resting and gathering intelligence, or press straight on to the archive while the daylight holds.",
+      "choices": [
+        {
+          "id": "choice_rest_at_inn",
+          "label": "Rest and gather intelligence",
+          "outcomes": [
+            {
+              "condition": null,
+              "consequence": {
+                "text": "A bed, a meal, and an evening well spent. The common room proves more useful than you expected.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Common+Room",
+                "stateChanges": { "gold": -5, "trust": 10, "suspicion": -5 }
+              },
+              "nextEventId": "inn_night"
+            }
+          ]
+        },
+        {
+          "id": "choice_press_on",
+          "label": "Go straight to the archive",
+          "outcomes": [
+            {
+              "condition": null,
+              "consequence": {
+                "text": "No time for comfort. You shoulder your bag and head north toward the palace district, keeping your head down.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Heading+North",
+                "stateChanges": {}
               },
               "nextEventId": "archive_exterior"
             }
@@ -116,20 +169,34 @@
       ]
     },
 
+    "inn_night": {
+      "id": "inn_night",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Firelight+and+Smoke",
+      "text": "The common room fills slowly with merchants and off-duty soldiers. You nurse your ale and listen. Two things emerge from the smoke and murmur: Lord Harwick has been paying the archive's day keeper to keep certain records buried. And the night guard rotation changes at the third bell — leaving a twenty-minute gap.",
+      "nextEventId": "inn_morning"
+    },
+
+    "inn_morning": {
+      "id": "inn_morning",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Before+Dawn",
+      "text": "You rise before dawn with the innkeeper's intelligence fresh in mind. You confirmed the guard rotation gap yourself from the alley last night — it is real. Twenty minutes. You have been a scholar all your life. This is simply fieldwork of a different kind.",
+      "nextEventId": "archive_exterior"
+    },
+
     "archive_exterior": {
       "id": "archive_exterior",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Archive",
-      "text": "The royal archive is a squat stone building, its doors locked with a heavy iron mechanism. A guard dozes against the wall. A second-floor window sits slightly ajar.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Royal+Archive",
+      "text": "The royal archive is a squat stone building at the edge of the palace complex. Its main doors are secured with heavy iron. A guard dozes against the wall to your right. Above, a second-floor window sits slightly ajar.",
       "choices": [
         {
           "id": "choice_use_key",
-          "label": "Use the brass key",
+          "label": "Try the brass key",
           "outcomes": [
             {
               "condition": { "==": ["$hasKey", true] },
               "consequence": {
-                "text": "The key fits perfectly. The lock turns without a sound. You slip inside.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Door+Opens",
+                "text": "The key fits the side entrance exactly, as if made for it. The lock turns without a sound. You slip inside while the guard's eyes remain closed.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Door+Opens",
                 "stateChanges": {}
               },
               "nextEventId": "archive_inside"
@@ -137,9 +204,9 @@
             {
               "condition": null,
               "consequence": {
-                "text": "You have no key. You fumble at the lock uselessly. The guard stirs.",
+                "text": "You have no key. You fumble at the lock until the guard stirs and turns his lamp your way. You back into the shadows, heart hammering.",
                 "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=No+Key",
-                "stateChanges": { "suspicion": 15 }
+                "stateChanges": { "suspicion": 20 }
               },
               "nextEventId": "archive_exterior_blocked"
             }
@@ -147,13 +214,13 @@
         },
         {
           "id": "choice_climb_window",
-          "label": "Climb to the window",
+          "label": "Climb to the open window",
           "outcomes": [
             {
               "condition": { "<": ["$suspicion", 40] },
               "consequence": {
-                "text": "Nobody is watching. You scale the wall quickly and drop silently into the archive.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Climbed+In",
+                "text": "Nobody is watching. You scale the rough stonework quickly and drop silently into the archive's reading room. The guard's snoring floats up from below.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Climbing+In",
                 "stateChanges": { "suspicion": 10 }
               },
               "nextEventId": "archive_inside"
@@ -161,7 +228,7 @@
             {
               "condition": null,
               "consequence": {
-                "text": "The guard wakes mid-climb. You freeze. He squints at you, then miraculously looks away. You pull yourself up with shaking arms.",
+                "text": "The guard wakes mid-climb. You freeze against the stone wall. He squints into the dark for a long, horrible moment — then looks away. You drag yourself over the sill with shaking arms.",
                 "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Close+Call",
                 "stateChanges": { "suspicion": 25 }
               },
@@ -175,34 +242,34 @@
     "archive_exterior_blocked": {
       "id": "archive_exterior_blocked",
       "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Turned+Away",
-      "text": "The guard is now fully awake and watching you with undisguised suspicion. The archive is no longer an option today. You will have to find another way to prove the heir's existence.",
-      "nextEventId": "confrontation"
+      "text": "The guard is now wide awake and watching you with undisguised interest. The archive is no longer an option tonight. You retreat into the narrow streets, your mission incomplete. You will have to face the council with only what you already possess.",
+      "nextEventId": "harwick_private"
     },
 
     "archive_inside": {
       "id": "archive_inside",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Archive+Interior",
-      "text": "Shelves of scrolls and ledgers tower over you. Dust motes drift through the light. The records you need must be here — but you hear footsteps above.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Towers+of+Scrolls",
+      "text": "Shelves of scrolls and ledgers tower over you in the half-dark. Dust motes hang in your lantern light. The woman said east wing, third cabinet. Somewhere above you, footsteps creak — a second guard making rounds.",
       "choices": [
         {
           "id": "choice_search_quickly",
-          "label": "Search quickly and leave",
+          "label": "Search fast and get out",
           "outcomes": [
             {
               "condition": { ">": ["$trust", 60] },
               "consequence": {
-                "text": "Your research has pointed you exactly where to look. Within minutes you have the birth record in hand.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Found+It",
-                "stateChanges": { "trust": 10 }
+                "text": "Your prior research has sharpened your instincts. You go exactly where the directions pointed and find the birth register within minutes, the footsteps still two rooms away.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Found+Quickly",
+                "stateChanges": { "hasRecord": true, "trust": 10 }
               },
               "nextEventId": "record_found"
             },
             {
               "condition": null,
               "consequence": {
-                "text": "You tear through the shelves in a panic. You find the record, but you've left the archive in disarray.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Ransacked",
-                "stateChanges": { "suspicion": 20 }
+                "text": "You tear through the shelves in controlled panic. You find the register — but you have disturbed the dust and left scrolls askew. The footsteps overhead are getting louder.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Frantic+Search",
+                "stateChanges": { "hasRecord": true, "suspicion": 20 }
               },
               "nextEventId": "record_found"
             }
@@ -210,14 +277,14 @@
         },
         {
           "id": "choice_hide_and_wait",
-          "label": "Hide and wait it out",
+          "label": "Hide and wait for quiet",
           "outcomes": [
             {
               "condition": null,
               "consequence": {
-                "text": "You crouch behind a shelf for an hour until silence returns. Methodically, you locate every relevant document.",
+                "text": "You press into the gap between two heavy shelves and breathe slowly. An hour passes. The guard's footsteps recede. In the renewed silence you search methodically and find everything.",
                 "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Patient+Search",
-                "stateChanges": { "trust": 5, "suspicion": -10 }
+                "stateChanges": { "hasRecord": true, "trust": 5, "suspicion": -10 }
               },
               "nextEventId": "record_found"
             }
@@ -228,70 +295,212 @@
 
     "record_found": {
       "id": "record_found",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Birth+Record",
-      "text": "The birth record is unmistakable: a child, born in secret to the king's handmaiden, registered under a false name. The heir is alive — and you know where to find them.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Birth+Register",
+      "text": "The entry is unmistakable: a child born to the king's handmaiden, registered under a false surname, with a note in the king's own hand acknowledging paternity. The heir is alive. You know her name. You know where she grew up.",
+      "nextEventId": "archive_exit"
+    },
+
+    "archive_exit": {
+      "id": "archive_exit",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Payment+Ledger",
+      "text": "As you prepare to leave, your lantern catches something else on the adjacent shelf: a ledger of payments to the archive's keeper over the past decade, signed by Lord Harwick's steward. Someone has been maintaining this secret at considerable expense.",
+      "choices": [
+        {
+          "id": "choice_take_only_record",
+          "label": "Take only the birth record",
+          "outcomes": [
+            {
+              "condition": null,
+              "consequence": {
+                "text": "You take what you came for and leave the rest. A clean exit is worth more than extra evidence.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Clean+Exit",
+                "stateChanges": { "suspicion": -5 }
+              },
+              "nextEventId": "dawn_streets"
+            }
+          ]
+        },
+        {
+          "id": "choice_copy_ledger",
+          "label": "Copy the payment ledger too",
+          "outcomes": [
+            {
+              "condition": null,
+              "consequence": {
+                "text": "You work by lamplight for another twenty minutes, transcribing the key entries. The extra evidence is damning. But dawn is closer than you thought when you finally slip outside.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Extra+Evidence",
+                "stateChanges": { "trust": 10, "suspicion": 15 }
+              },
+              "nextEventId": "dawn_streets"
+            }
+          ]
+        }
+      ]
+    },
+
+    "dawn_streets": {
+      "id": "dawn_streets",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+City+at+Dawn",
+      "text": "You emerge onto the cobblestones as dawn bleeds pink over the rooftops. The documents are tucked inside your coat, close to your chest. The council meets tomorrow. You have done the impossible — and you are not done yet.",
+      "nextEventId": "harwick_private"
+    },
+
+    "harwick_private": {
+      "id": "harwick_private",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Lord+Harwick",
+      "text": "Lord Harwick himself stands in the shadow of a doorway — flanked by two quiet men, expression unreadable. He appears to have been expecting you. 'I think you and I should speak privately,' he says. 'I make it a habit to know who is asking questions in my city.'",
+      "choices": [
+        {
+          "id": "choice_accept_offer",
+          "label": "Hear what he is offering",
+          "outcomes": [
+            {
+              "condition": { "<": ["$suspicion", 30] },
+              "consequence": {
+                "text": "His offer is generous — almost insultingly so. A substantial sum, a comfortable post in the eastern provinces, and a promise that you will never be bothered again. You take the coin before you can think better of it.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Gold+Purse",
+                "stateChanges": { "gold": 100 }
+              },
+              "nextEventId": "bribed_path"
+            },
+            {
+              "condition": null,
+              "consequence": {
+                "text": "The offer is firm and leaves no room to negotiate. There is a threat underneath the courtesy. You take the coin. It feels like lead in your pocket.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=A+Firm+Offer",
+                "stateChanges": { "gold": 50 }
+              },
+              "nextEventId": "bribed_path"
+            }
+          ]
+        },
+        {
+          "id": "choice_refuse_offer",
+          "label": "Refuse him flatly",
+          "outcomes": [
+            {
+              "condition": { ">": ["$trust", 55] },
+              "consequence": {
+                "text": "You look him in the eye and decline. Harwick studies you for a long moment. Then he nods — the nod of a man who respects an adversary. 'Then we shall meet in the council chamber,' he says quietly.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Staredown",
+                "stateChanges": { "trust": 10 }
+              },
+              "nextEventId": "council_eve"
+            },
+            {
+              "condition": null,
+              "consequence": {
+                "text": "You refuse. His expression shifts to something colder. 'You are certain?' He leaves without another word, but the threat hangs in the air long after.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Threat",
+                "stateChanges": { "suspicion": 20 }
+              },
+              "nextEventId": "council_eve"
+            }
+          ]
+        }
+      ]
+    },
+
+    "bribed_path": {
+      "id": "bribed_path",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Packing+to+Leave",
+      "text": "You spend an hour at your writing desk composing a letter withdrawing your findings as a misreading of old genealogical records. By morning you are on a northbound coach, your purse heavier than it has been in years.",
+      "nextEventId": "ending_betrayal"
+    },
+
+    "council_eve": {
+      "id": "council_eve",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Night+Before",
+      "text": "The hours before the council meeting pass slowly. You arrange your evidence on the writing table — the birth register, your notes, the king's original letter. Through thin walls you can hear the palace bells and, more distantly, Lord Harwick's messengers riding through the night.",
       "nextEventId": "confrontation"
     },
 
     "confrontation": {
       "id": "confrontation",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Council",
-      "text": "You stand before the Council of Regents, your evidence in hand. Lord Harwick — who has ruled in the vacuum — stares at you with cold fury. The other councillors wait in tense silence.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Council+Chamber",
+      "text": "You stand before the assembled Council of Regents — nine faces carved in varying degrees of attention and scepticism. Lord Harwick sits at the far end, posture immaculate. The doors close behind you with a sound like a verdict.",
       "choices": [
         {
           "id": "choice_present_evidence",
           "label": "Present the evidence boldly",
           "outcomes": [
             {
-              "condition": { ">": ["$trust", 55] },
+              "condition": { "and": [{ "==": ["$hasRecord", true] }, { ">": ["$trust", 65] }] },
               "consequence": {
-                "text": "Your reputation precedes you. The councillors lean forward with genuine interest. Lord Harwick's composure cracks.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Council+Listens",
+                "text": "You speak with the measured certainty of a scholar who has checked every source twice. You lay the birth register before them. The council leans forward. Harwick's composure shows the first crack.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Council+Listens",
                 "stateChanges": { "trust": 15 }
               },
-              "nextEventId": "ending_triumph"
+              "nextEventId": "epilogue_triumph_1"
             },
             {
-              "condition": { ">": ["$suspicion", 60] },
+              "condition": { "and": [{ "==": ["$hasRecord", true] }, { ">": ["$suspicion", 60] }] },
               "consequence": {
-                "text": "Before you can speak, Lord Harwick calls you a spy and a forger. Too many have seen you skulking about.",
+                "text": "Before you can finish your opening, Harwick rises. 'This man was seen breaking into the royal archive. Everything he presents is stolen and fabricated.' Too many of the city watch have seen you skulking.",
                 "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Accused",
                 "stateChanges": { "suspicion": 10 }
               },
-              "nextEventId": "ending_imprisoned"
+              "nextEventId": "epilogue_imprisoned_1"
+            },
+            {
+              "condition": { "==": ["$hasRecord", true] },
+              "consequence": {
+                "text": "The council receives your evidence without enthusiasm. The birth register is authentic — even Harwick cannot deny the seal — but he questions the chain of custody. The matter is tabled for independent inquiry.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Council+Divided",
+                "stateChanges": {}
+              },
+              "nextEventId": "epilogue_stalemate_1"
             },
             {
               "condition": null,
               "consequence": {
-                "text": "The council is divided. Some believe you; others do not. The matter is tabled for investigation.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Council+Divided",
+                "text": "Without the archive record your claims dissolve into testimony. You have the king's letter, but Harwick's scribes call it a forgery within minutes. The council looks away.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=No+Evidence",
                 "stateChanges": {}
               },
-              "nextEventId": "ending_stalemate"
+              "nextEventId": "epilogue_exile_1"
             }
           ]
         },
         {
           "id": "choice_seek_ally",
-          "label": "Appeal to a sympathetic councillor",
+          "label": "Appeal to Lady Mira first",
           "outcomes": [
             {
-              "condition": { ">": ["$trust", 50] },
+              "condition": { "and": [{ "==": ["$hasRecord", true] }, { ">": ["$trust", 65] }] },
               "consequence": {
-                "text": "Lady Mira, the eldest councillor, takes you aside. She has suspected Harwick's ambitions for years. She vouches for you.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Lady+Mira",
-                "stateChanges": { "trust": 20 }
+                "text": "Lady Mira — eldest of the council and Harwick's quiet opponent — takes your evidence in both hands and reads it twice. Then she stands. 'I move that this matter be heard in full,' she says. The room shifts.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Lady+Mira+Rises",
+                "stateChanges": { "trust": 15 }
               },
-              "nextEventId": "ending_triumph"
+              "nextEventId": "epilogue_triumph_1"
+            },
+            {
+              "condition": { "and": [{ "==": ["$hasRecord", true] }, { ">": ["$trust", 50] }] },
+              "consequence": {
+                "text": "Lady Mira agrees the evidence is sound but urges caution. She takes you aside. 'Let me speak to three others tonight,' she murmurs. It is less than victory — but it is not failure.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=A+Quiet+Word",
+                "stateChanges": { "trust": 10 }
+              },
+              "nextEventId": "epilogue_advisor_1"
+            },
+            {
+              "condition": { "==": ["$hasRecord", true] },
+              "consequence": {
+                "text": "Lady Mira receives your evidence politely but will not commit. 'The timing is complicated,' she says. No one else will meet your eye. You present the record to the chamber alone.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=No+Ally+Found",
+                "stateChanges": {}
+              },
+              "nextEventId": "epilogue_stalemate_1"
             },
             {
               "condition": null,
               "consequence": {
-                "text": "No one will meet your eyes. You are alone in this. Harwick smiles thinly.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=No+Allies",
-                "stateChanges": { "suspicion": 10 }
+                "text": "Without evidence you are simply a stranger making accusations against a sitting regent. Lady Mira shakes her head almost imperceptibly. You are entirely alone.",
+                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Alone+in+the+Chamber",
+                "stateChanges": {}
               },
-              "nextEventId": "ending_exile"
+              "nextEventId": "epilogue_exile_1"
             }
           ]
         }
@@ -301,43 +510,85 @@
     "epilogue_triumph_1": {
       "id": "epilogue_triumph_1",
       "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Heir+Revealed",
-      "text": "The heir is found and brought before the council. She is young — barely twenty — but carries herself with unmistakable dignity.",
+      "text": "The council sends for the woman named in the register. She arrives three days later — young, barely twenty, wearing a wool dress and the manner of someone who has spent a life not knowing their own name. The council chamber falls silent when she enters.",
       "nextEventId": "epilogue_triumph_2"
     },
 
     "epilogue_triumph_2": {
       "id": "epilogue_triumph_2",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Coronation",
-      "text": "Three weeks later, bells ring across Valdris as the lost heir is crowned. Lord Harwick stands in chains. You watch from the crowd, a scholar who changed the course of a kingdom.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Coronation+Bells",
+      "text": "The coronation is held three weeks later. Bells ring across Valdris from dawn to dusk. Lord Harwick stands in chains in the outer courtyard — his land seizures discovered to be the least of his crimes. You watch from the crowd, a scholar who changed the course of a kingdom.",
       "nextEventId": "ending_triumph"
+    },
+
+    "epilogue_stalemate_1": {
+      "id": "epilogue_stalemate_1",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Inquiry+Convenes",
+      "text": "The council calls for an independent inquiry. Harwick's motion to dismiss is overruled, if narrowly. You are asked to remain in the capital as a material witness — which means you are watched. The inquiry will take months. The heir remains hidden. Harwick remains in his seat.",
+      "nextEventId": "ending_stalemate"
+    },
+
+    "epilogue_exile_1": {
+      "id": "epilogue_exile_1",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Writ+of+Passage",
+      "text": "A guard arrives at your room before dawn carrying a one-way writ of passage. 'The Council of Regents has determined your presence to be a disruption to public order,' he reads flatly. 'You will depart by midday.' There is no avenue of appeal.",
+      "nextEventId": "ending_exile"
+    },
+
+    "epilogue_imprisoned_1": {
+      "id": "epilogue_imprisoned_1",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Taken+at+Night",
+      "text": "They come for you at midnight — not the city watch but private men in plain clothing. You are taken not to a public gaol but to a cellar beneath Lord Harwick's townhouse. A man in gray explains, in a quiet voice, that fabricating evidence against a sitting regent carries severe consequences.",
+      "nextEventId": "ending_imprisoned"
+    },
+
+    "epilogue_advisor_1": {
+      "id": "epilogue_advisor_1",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Lady+Mira+s+Study",
+      "text": "Lady Mira receives you in her private study that evening. The inquiry she is quietly assembling will be thorough. 'I need someone with your particular skills,' she tells you. 'Someone who knows where to look and how to be discreet.' She names a retainer that would fund a year's careful work.",
+      "nextEventId": "ending_advisor"
     },
 
     "ending_triumph": {
       "id": "ending_triumph",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Victory",
-      "text": "The kingdom of Valdris has its ruler. Your name will be written in the histories — if anyone thinks to ask who the wandering scholar was.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Crown+Restored",
+      "text": "The kingdom of Valdris has its rightful ruler. The years of regency are over. Somewhere in the city histories, a note will record that a wandering scholar presented evidence that changed everything — if anyone thinks to ask who you were.",
       "endingTitle": "The Crown Restored"
     },
 
     "ending_stalemate": {
       "id": "ending_stalemate",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Stalemate",
-      "text": "The investigation drags on for months. You leave the capital before it concludes, your mission incomplete. Somewhere, the heir lives on — unknown, unclaimed.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=An+Open+Question",
+      "text": "The inquiry drags on. You remain in the capital, watched and waiting. The heir is still out there, unaware of her name. Harwick still sits in his seat. You have not failed — but you have not yet succeeded. The story is not finished.",
       "endingTitle": "An Unfinished Chapter"
     },
 
     "ending_exile": {
       "id": "ending_exile",
       "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Road+Out",
-      "text": "You are escorted to the city gates and told never to return. The evidence you carried is confiscated. As you walk the empty road, you wonder if the heir will ever be found.",
+      "text": "You walk the southern road out of Valdris as the city gates close behind you. The evidence you carried is confiscated. You will not return. Somewhere the heir still lives — unknowing, unclaimed. You tried. It was not enough.",
       "endingTitle": "The Road of Exile"
     },
 
     "ending_imprisoned": {
       "id": "ending_imprisoned",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Cell",
-      "text": "The cell is cold and the walls are thick. Lord Harwick visits once, to tell you that your evidence has been destroyed. Nobody is coming for you.",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Stone+and+Silence",
+      "text": "The cellar is cold and the walls are old stone. Lord Harwick visits once, to confirm that your evidence has been destroyed and that no one is looking for you. The silence after he leaves is complete.",
       "endingTitle": "Forgotten in the Dark"
+    },
+
+    "ending_betrayal": {
+      "id": "ending_betrayal",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Open+Road",
+      "text": "You left with your life, your freedom, and more coin than you expected. The road north is long. Somewhere behind you, the heir still lives in obscurity — and Lord Harwick's regency is formalised without opposition. You tell yourself you had no real choice.",
+      "endingTitle": "The Price of Silence"
+    },
+
+    "ending_advisor": {
+      "id": "ending_advisor",
+      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Scholar+s+Work",
+      "text": "You take the retainer and the small, cold room Lady Mira provides. The work is slow and careful and occasionally dangerous. But the inquiry moves forward. The heir's name circulates in quiet corridors. The truth does not always arrive like a thunderclap. Sometimes it seeps in like water through stone.",
+      "endingTitle": "The Long Game"
     }
 
   }

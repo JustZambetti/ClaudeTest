@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { StoryEvent } from '../../types/story';
 import { isChoiceEvent, isNarrativeEvent } from '../../types/story';
 import { ImageWithShimmer } from '../UI/ImageWithShimmer';
@@ -8,10 +8,21 @@ interface CardFrontProps {
   onSelectChoice: (choiceId: string) => void;
   onContinueNarrative: () => void;
   disabled?: boolean;
+  /** When set, highlight this choice button (used during replay to show which choice was made). */
+  highlightedChoiceId?: string;
 }
 
-export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled }: CardFrontProps) {
+export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled, highlightedChoiceId }: CardFrontProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const firstInteractiveRef = useRef<HTMLButtonElement>(null);
+
+  // Focus the first interactive element when a new card appears.
+  // Guard with pointer:fine so we don't trigger the virtual keyboard on touch devices.
+  useEffect(() => {
+    if (window.matchMedia('(pointer: fine)').matches) {
+      firstInteractiveRef.current?.focus({ preventScroll: true });
+    }
+  }, []); // fires once per card mount
 
   function handleChoice(choiceId: string) {
     if (disabled || selectedId) return;
@@ -35,7 +46,10 @@ export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled
       <div className="flex flex-col flex-1 min-h-0 px-5 pt-4 pb-4">
         {/* Story text — scrollable if very long */}
         <div className="flex-1 overflow-y-auto min-h-0 mb-4 scrollbar-none">
-          <p className="text-[#e8e0d0] font-serif text-[1.05rem] leading-[1.75] select-none">
+          <p
+            aria-live="polite"
+            className="text-[#e8e0d0] font-serif text-[1.05rem] leading-[1.75] select-none"
+          >
             {event.text}
           </p>
         </div>
@@ -43,9 +57,10 @@ export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled
         {/* Buttons */}
         {isChoiceEvent(event) && (
           <div className="flex gap-3 shrink-0">
-            {event.choices.map((choice) => (
+            {event.choices.map((choice, idx) => (
               <button
                 key={choice.id}
+                ref={idx === 0 ? firstInteractiveRef : undefined}
                 onClick={() => handleChoice(choice.id)}
                 disabled={disabled || selectedId !== null}
                 className={`
@@ -53,7 +68,7 @@ export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled
                   font-serif text-sm leading-snug
                   border rounded-lg
                   transition-all duration-150 select-none
-                  ${selectedId === choice.id
+                  ${selectedId === choice.id || highlightedChoiceId === choice.id
                     ? 'bg-[#3d2e1a] border-[#a07820] text-[#f0d88a] scale-[0.97]'
                     : 'bg-[#251e15] border-[#5c4a2a] text-[#c8b896] hover:bg-[#2e2419] hover:border-[#7a6035] active:scale-[0.97]'
                   }
@@ -69,6 +84,7 @@ export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled
         {isNarrativeEvent(event) && (
           <div className="flex justify-center shrink-0">
             <button
+              ref={firstInteractiveRef}
               onClick={onContinueNarrative}
               disabled={disabled}
               className="

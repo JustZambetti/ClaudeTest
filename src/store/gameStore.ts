@@ -26,12 +26,14 @@ interface GameState {
 
   activeSaveSlot: 1 | 2 | 3 | null;
 
-  startGame: (startEventId: string, initialState: StoryState, slotId: 1 | 2 | 3) => void;
+  startGame: (startEventId: string, initialState: StoryState, slotId: 1 | 2 | 3 | null) => void;
   setCardPhase: (phase: CardPhase) => void;
   setPendingOutcome: (outcome: ResolvedOutcome | null) => void;
   confirmConsequence: (nextEventId: string, entry: HistoryEntry, newState: StoryState, choiceId: string) => void;
   continueNarrative: (nextEventId: string, entry: HistoryEntry) => void;
   loadFromSave: (slot: SaveSlot) => void;
+  loadGameState: (data: { currentEventId: string; storyState: StoryState; history: HistoryEntry[]; choicePath: string[] }) => void;
+  setActiveSaveSlot: (slotId: 1 | 2 | 3) => void;
   resetGame: () => void;
 }
 
@@ -92,6 +94,18 @@ export const useGameStore = create<GameState>()(
           choicePath: slot.choicePath,
           activeSaveSlot: slot.slotId,
         }),
+
+      loadGameState: (data) =>
+        set({
+          currentEventId: data.currentEventId,
+          cardPhase: 'front',
+          pendingOutcome: null,
+          storyState: data.storyState,
+          history: data.history,
+          choicePath: data.choicePath,
+        }),
+
+      setActiveSaveSlot: (slotId) => set({ activeSaveSlot: slotId }),
 
       resetGame: () => set(initialGameState),
     }),
