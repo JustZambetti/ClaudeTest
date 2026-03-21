@@ -56,7 +56,7 @@ export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled
 
         {/* Buttons */}
         {isChoiceEvent(event) && (
-          <div className="flex gap-3 shrink-0">
+          <div className="flex gap-3 shrink-0 justify-center">
             {event.choices.map((choice, idx) => (
               <button
                 key={choice.id}
@@ -64,10 +64,10 @@ export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled
                 onClick={() => handleChoice(choice.id)}
                 disabled={disabled || selectedId !== null}
                 className={`
-                  flex-1 min-h-[52px] px-3 py-2
-                  font-serif text-sm leading-snug
-                  border rounded-lg
+                  font-serif leading-snug
+                  border
                   transition-all duration-150 select-none
+                  ${['Heart', 'Sword'].includes(choice.label) ? 'w-14 h-14 rounded-full text-2xl' : 'flex-1 min-h-[52px] px-3 py-2 rounded-lg text-sm'}
                   ${selectedId === choice.id || highlightedChoiceId === choice.id
                     ? 'bg-[#3d2e1a] border-[#a07820] text-[#f0d88a] scale-[0.97]'
                     : 'bg-[#251e15] border-[#5c4a2a] text-[#c8b896] hover:bg-[#2e2419] hover:border-[#7a6035] active:scale-[0.97]'
@@ -75,7 +75,7 @@ export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled
                   disabled:opacity-50 disabled:cursor-not-allowed
                 `}
               >
-                {choice.label}
+                {choice.label === 'Heart' ? '♥' : choice.label === 'Sword' ? '⚔' : choice.label}
               </button>
             ))}
           </div>

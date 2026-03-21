@@ -91,7 +91,6 @@
       "id": "no_sword_detour",
       "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Eyes in the dark",
       "text": "You retreat slowly. Your right hand is drawn to the sword. QUICK! YOU ARE IN DANGER!",
-      "nextEventId": "no_sword_detour",
       "choices": [
         {
           "id": "choice_yes_sword_after_detour",
@@ -311,7 +310,7 @@
     },
 
     "path_to_source_1": {
-      "id": "old_man_6",
+      "id": "path_to_source_1",
       "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The path",
       "text": "",
       "nextEventId": "old_man_4"
