@@ -41,7 +41,7 @@ export function ImageWithShimmer({
       {/* Image */}
       {!error && !missing && (
         <img
-          src={src}
+          src={src.startsWith('/') && !src.startsWith('//') ? import.meta.env.BASE_URL.replace(/\/$/, '') + src : src}
           alt={alt}
           onLoad={() => setLoaded(true)}
           onError={() => setError(true)}
