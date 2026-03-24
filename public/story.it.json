@@ -19,14 +19,14 @@
 
     "intro": {
       "id": "intro",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Forest",
+      "image": "/images/forest-intro.jpg",
       "text": "Ti risvegli in una foresta oscura, circondato da alberi altissimi. Dove sei? Chi sei? La testa ti fa male quando cerchi di ricordare.",
       "nextEventId": "apple"
     },
 
     "apple": {
       "id": "apple",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Apple?",
+      "image": "/images/apple.jpg",
       "text": "Di una cosa sei sicuro: hai FAME. Da quanto tempo dormivi? Di fronte a te, appeso a un albero, vedi un frutto che non hai mai visto.",
       "choices": [
         {

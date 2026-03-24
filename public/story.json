@@ -19,14 +19,14 @@
 
     "intro": {
       "id": "intro",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Forest",
+      "image": "/images/forest-intro.jpg",
       "text": "You wake up in a dark forest, surrounded by tall trees. Where are you? Who are you? Your head hurts when you try to remember",
       "nextEventId": "apple"
     },
 
     "apple": {
       "id": "apple",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Apple?",
+      "image": "/images/apple.jpg",
       "text": "You are sure about something. You are HUNGRY. For how much time have you been asleep? In front of you, hanging from a tree, you see an unfamiliar fruit.",
       "choices": [
         {

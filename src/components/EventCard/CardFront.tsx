@@ -33,13 +33,15 @@ export function CardFront({ event, onSelectChoice, onContinueNarrative, disabled
 
   return (
     <div className="flex flex-col flex-1 min-h-0">
-      {/* Image area — top 45% */}
-      <div className="shrink-0" style={{ height: '45%' }}>
+      {/* Image area — top 55% */}
+      <div className="relative shrink-0 overflow-hidden" style={{ height: '55%' }}>
         <ImageWithShimmer
           src={event.image}
           alt="Event illustration"
           className="w-full h-full"
+          objectPosition="top"
         />
+        <div className="absolute inset-0 pointer-events-none" style={{ boxShadow: 'inset 0 0 40px 10px #1a1714' }} />
       </div>
 
       {/* Text + buttons — bottom 55% */}

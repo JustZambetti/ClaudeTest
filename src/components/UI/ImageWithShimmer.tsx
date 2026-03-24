@@ -6,6 +6,8 @@ interface ImageWithShimmerProps {
   className?: string;
   /** Override the vignette gradient start colour (default: #1a1714, the card body colour). */
   vignetteColor?: string;
+  /** CSS object-position value, e.g. 'top', 'center', '50% 20%' (default: 'center') */
+  objectPosition?: string;
 }
 
 export function ImageWithShimmer({
@@ -13,6 +15,7 @@ export function ImageWithShimmer({
   alt,
   className = '',
   vignetteColor = '#1a1714',
+  objectPosition = 'center',
 }: ImageWithShimmerProps) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -45,6 +48,7 @@ export function ImageWithShimmer({
           className={`w-full h-full object-cover transition-opacity duration-500 ${
             loaded ? 'opacity-100' : 'opacity-0'
           }`}
+          style={{ objectPosition }}
         />
       )}
 
