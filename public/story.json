@@ -37,7 +37,7 @@
               "condition": null,
               "consequence": {
                 "text": "You LOVE it! Cruncy and sweet at the same time.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Chewed+Fruit"
+                "image": "/images/eaten-apple.jpg"
               },
               "nextEventId": "sword_1"
             }
@@ -47,7 +47,7 @@
     },
     "sword_1": {
       "id": "sword_1",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Sword",
+      "image": "/images/sword.jpg",
       "text": "You look around, trying to figure out what is happening to you, when your eyes are attracted by a sword. You feel a cold shiver down you spine...",
       "choices": [
         {
@@ -58,7 +58,7 @@
               "condition": null,
               "consequence": {
                 "text": "Violence will not help you. You hand tries to reach the sword handle when you stop yourself and keep looking around.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Peace"
+                "image": "/images/forest-intro.jpg"
               },
               "nextEventId": "no_sword"
             }
@@ -72,7 +72,7 @@
               "condition": null,
               "consequence": {
                 "text": "Yes. Now you remember. You are a FEARLESS KNIGHT.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Sword",
+                "image": "/images/take-sword.jpg",
                 "stateChanges": { "swordCount": 1 }
               },
               "nextEventId": "crossroad"
@@ -84,14 +84,14 @@
 
     "no_sword": {
       "id": "no_sword",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Eyes in the dark",
+      "image": "/images/woods-monster-1.jpg",
       "text": "With looking around, you notice someting in the dark of the woods. Two eyes. Looking directly at you! You freeze.",
       "nextEventId": "no_sword_detour"
     },
 
     "no_sword_detour": {
       "id": "no_sword_detour",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Eyes in the dark",
+      "image": "/images/woods-monster-2.jpg",
       "text": "You retreat slowly. Your right hand is drawn to the sword. QUICK! YOU ARE IN DANGER!",
       "choices": [
         {
@@ -102,7 +102,7 @@
               "condition": null,
               "consequence": {
                 "text": "You take the sword. In an instant the staring eyes disappear. Was it real? Did the sword scare the creature away?",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Got sword",
+                "image": "/images/take-sword.jpg",
                 "stateChanges": { "swordCount": 1 }
               },
               "nextEventId": "crossroad"

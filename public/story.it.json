@@ -37,7 +37,7 @@
               "condition": null,
               "consequence": {
                 "text": "Ti piace DA MORIRE! Croccante e dolce allo stesso tempo.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Chewed+Fruit"
+                "image": "/images/eaten-apple.jpg"
               },
               "nextEventId": "sword_1"
             }
@@ -48,7 +48,7 @@
 
     "sword_1": {
       "id": "sword_1",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=The+Sword",
+      "image": "/images/sword.jpg",
       "text": "Ti guardi intorno cercando di capire cosa ti stia succedendo, quando i tuoi occhi vengono attratti da una spada. Un brivido freddo ti scorre lungo la schiena...",
       "choices": [
         {
@@ -59,7 +59,7 @@
               "condition": null,
               "consequence": {
                 "text": "La violenza non ti aiuterà. La tua mano si protende verso l'elsa della spada, poi ti fermi e continui a guardarti intorno.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Peace"
+                "image": "/images/forest-intro.jpg"
               },
               "nextEventId": "no_sword"
             }
@@ -73,7 +73,7 @@
               "condition": null,
               "consequence": {
                 "text": "Sì. Ora ricordi. Sei un CAVALIERE IMPAVIDO.",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Sword",
+                "image": "/images/take-sword.jpg",
                 "stateChanges": { "swordCount": 1 }
               },
               "nextEventId": "crossroad"
@@ -85,14 +85,14 @@
 
     "no_sword": {
       "id": "no_sword",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Eyes in the dark",
+      "image": "/images/woods-monster-1.jpg",
       "text": "Mentre ti guardi intorno, noti qualcosa nell'oscurità del bosco. Due occhi. Fissi dritti su di te. Rimani di pietra.",
       "nextEventId": "no_sword_detour"
     },
 
     "no_sword_detour": {
       "id": "no_sword_detour",
-      "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Eyes in the dark",
+      "image": "/images/woods-monster-2.jpg",
       "text": "Ti ritiri lentamente. La tua mano destra è attratta dalla spada. PRESTO! SEI IN PERICOLO!",
       "choices": [
         {
@@ -103,7 +103,7 @@
               "condition": null,
               "consequence": {
                 "text": "Impugni la spada. In un istante gli occhi spariscono. Era reale? La spada ha spaventato la creatura?",
-                "image": "https://placehold.co/800x500/1a1714/e8e0d0?text=Got sword",
+                "image": "/images/take-sword.jpg",
                 "stateChanges": { "swordCount": 1 }
               },
               "nextEventId": "crossroad"
